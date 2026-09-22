@@ -1,0 +1,219 @@
+cd /mnt/c/Users/adminqt/.gemini/antigravity/scratch/bitacoras-html-final
+
+cat > index.html <<'HTML'
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gestion Bitacoras e Indicadores - Mismo Menu - Registrar + Validacion Checkbox</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,Segoe UI,Arial,sans-serif}
+body{background:#f6f7fb;color:#111827;display:flex;min-height:100vh}
+.sidebar{width:280px;background:#0f172a;color:#fff;position:fixed;left:0;top:0;bottom:0;z-index:50;transition:.3s;overflow-y:auto;border-right:1px solid #1e293b;display:flex;flex-direction:column}
+.sidebar.hidden{transform:translateX(-100%)}
+.sidebar-head{height:64px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #1e293b}
+.sidebar-head b{display:block;font-size:13px}.sidebar-head span{font-size:10px;color:#94a3b8}
+.sidebar-menu{padding:12px;flex:1}
+.menu-label{font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin:14px 12px 6px}
+.menu-item{padding:10px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:12px;color:#cbd5e1;margin-bottom:2px}
+.menu-item:hover{background:#1e293b;color:#fff}.menu-item.active{background:#2563eb;color:#fff}
+.mi{width:26px;height:26px;background:#1e293b;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.submenu{margin-left:38px;border-left:1px solid #1e293b;padding-left:10px;display:none;margin-bottom:6px}.submenu.open{display:block}
+.submenu-item{padding:8px 10px;font-size:11px;color:#94a3b8;cursor:pointer;border-radius:8px;margin-bottom:2px;display:flex;justify-content:space-between}
+.submenu-item:hover{background:#1e293b;color:#fff}
+.sub-sub{margin-left:10px;border-left:1px dashed #334155;padding-left:10px;display:none}.sub-sub.open{display:block}
+.sub-sub-item{padding:6px 8px;font-size:10px;color:#94a3b8;cursor:pointer;border-radius:6px;display:flex;align-items:center;gap:6px}
+.sub-sub-item:hover{background:#1e293b;color:#fff}
+.main{flex:1;margin-left:280px;transition:.3s}.main.full{margin-left:0}
+.top{height:64px;background:#fff;border-bottom:1px solid #eef0f5;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:20}
+.btn-icon{width:40px;height:40px;border-radius:10px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.wrap{max-width:1320px;margin:0 auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media(max-width:1000px){.grid{grid-template-columns:1fr 1fr}}@media(max-width:640px){.grid{grid-template-columns:1fr}.main{margin-left:0}}
+.card{background:#fff;border-radius:16px;border:1px solid #eef0f5;box-shadow:0 2px 12px rgba(16,24,40,.03);overflow:hidden}
+.card-head{padding:14px 16px;border-bottom:1px solid #f9fafb;display:flex;justify-content:space-between;align-items:center}
+.card-head h3{font-size:11px;font-weight:800;text-transform:uppercase}.tag{background:#f3f4f6;padding:4px 8px;border-radius:20px;font-size:8px;font-weight:800}
+.card-body{padding:12px}
+.row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;border:1px solid transparent;margin-bottom:6px}
+.row:hover{background:#f8fafc;border-color:#eef0f5}
+.ic{width:28px;height:28px;border-radius:8px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.txt{flex:1}.txt b{font-size:11px;display:block}.txt span{font-size:10px;color:#6b7280}
+.btn{border:none;padding:9px 12px;border-radius:10px;font-weight:700;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-dark{background:#0f172a;color:#fff}.btn-ghost{background:#f3f4f6;color:#374151;border:1px solid #e5e7eb}.btn-danger{background:#fff;color:#ef4444;border:1px solid #fecaca}
+.flot{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(10px);display:none;z-index:100;padding:20px;overflow-y:auto}
+.flot.open{display:flex;align-items:flex-start;justify-content:center;padding-top:30px}
+.flot-box{background:#fff;border-radius:16px;width:1100px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
+.flot-head{padding:14px 18px;border-bottom:1px solid #eef0f5;display:flex;justify-content:space-between;align-items:center;background:#fff;position:sticky;top:0}
+.flot-head h3{font-size:13px;font-weight:800}.flot-head p{font-size:10px;color:#6b7280}
+.flot-body{padding:16px;background:#f8fafc;max-height:78vh;overflow-y:auto}
+.toolbar{display:flex;gap:10px;margin-bottom:12px}
+.table-wrap{overflow:auto;border-radius:10px;border:1px solid #e5e7eb;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:900px}
+th{background:#f9fafb;color:#475569;padding:10px 8px;font-size:9px;text-transform:uppercase;font-weight:800;text-align:left;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid #f3f4f6}
+.input{flex:1;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;font-size:11px;background:#fff}
+.badge{padding:4px 8px;border-radius:20px;font-size:9px;font-weight:700;display:inline-flex}.ok{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}.nook{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}.modal.open{display:flex}.modal-box{background:#fff;border-radius:14px;width:720px;max-width:100%;overflow:hidden;display:flex;flex-direction:column;max-height:90vh}
+.modal-head{padding:16px 18px;border-bottom:1px solid #eef0f5;display:flex;justify-content:space-between}
+#mForm{padding:16px;overflow-y:auto}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-label{font-size:9px;font-weight:800;color:#334155;text-transform:uppercase;margin-bottom:4px;display:block}
+.modal-foot{padding:14px 18px;border-top:1px solid #eef0f5;display:flex;gap:10px}
+.check-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #eef0f5;border-radius:10px;background:#fff}
+.check-item input{width:16px;height:16px}
+.toast{position:fixed;bottom:20px;right:20px;background:#0f172a;color:#fff;padding:10px 14px;border-radius:10px;font-size:11px;display:none;z-index:300}.toast.show{display:flex}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);display:none;z-index:45}.overlay.show{display:block}
+</style>
+<script>
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('hidden');document.getElementById('main').classList.toggle('full');document.getElementById('overlay').classList.toggle('show')}
+function toggleSub(id){var e=document.getElementById(id);if(e){e.classList.toggle('open')}}
+function openF(id){var el=document.getElementById('flotante-'+id);if(!el)return;el.classList.add('open');if(id==='equipos')renderEquipos();if(id==='catalogo')renderCatalogo();if(id==='madre')openMadre();if(id==='dashboard')openDash();if(['resp','acceso','mant','vuln'].indexOf(id)!==-1)openOrig(id);if(id.indexOf('valid-')===0)openValid(id.split('-')[1])}
+function closeF(id){var el=document.getElementById('flotante-'+id);if(el)el.classList.remove('open')}
+</script>
+</head>
+<body>
+
+<nav id="sidebar" class="sidebar">
+<div class="sidebar-head"><div><b>Gestion Empresarial</b><span>Portal Corporativo</span></div><button class="btn-icon" onclick="toggleSidebar()">✕</button></div>
+<div class="sidebar-menu">
+<div class="menu-label">Principal</div>
+<div class="menu-item active" onclick="openF('dashboard')"><span class="mi">◧</span> Dashboard Ejecutivo</div>
+
+<div class="menu-label">Gestion</div>
+<div class="menu-item" onclick="toggleSub('sub-matriz')"><span class="mi">M</span> Matriz Madre ▾</div>
+<div id="sub-matriz" class="submenu open">
+<div class="submenu-item" onclick="openF('madre')">Ver Matriz Completa</div>
+</div>
+
+<div class="menu-label" style="color:#60a5fa">Bitacora e Indicadores - Mismo Menu</div>
+<div class="menu-item" onclick="toggleSub('sub-bit-ind')" style="background:#1e293b;color:#fff;border:1px solid #2563eb"><span class="mi" style="background:#2563eb;color:#fff">BI</span> Bitacora e Indicadores ▾</div>
+<div id="sub-bit-ind" class="submenu open">
+
+<div class="submenu-item" onclick="toggleSub('sub-resp')"><span>📦 Respaldos</span><span>▾</span></div>
+<div id="sub-resp" class="sub-sub open">
+<div class="sub-sub-item" onclick="openModalOrig('resp')">➕ Registrar Respaldo</div>
+<div class="sub-sub-item" onclick="openF('valid-resp')">☑ Indicadores Validacion - Checkbox</div>
+</div>
+
+<div class="submenu-item" onclick="toggleSub('sub-acceso')"><span>🔐 Control Acceso</span><span>▾</span></div>
+<div id="sub-acceso" class="sub-sub open">
+<div class="sub-sub-item" onclick="openModalOrig('acceso')">➕ Registrar Acceso</div>
+<div class="sub-sub-item" onclick="openF('valid-acceso')">☑ Indicadores Validacion - Checkbox</div>
+</div>
+
+<div class="submenu-item" onclick="toggleSub('sub-mant')"><span>🔧 Mantenimiento</span><span>▾</span></div>
+<div id="sub-mant" class="sub-sub open">
+<div class="sub-sub-item" onclick="openModalOrig('mant')">➕ Registrar Mantenimiento</div>
+<div class="sub-sub-item" onclick="openF('valid-mant')">☑ Indicadores Validacion - Checkbox</div>
+</div>
+
+<div class="submenu-item" onclick="toggleSub('sub-vuln')"><span>⚠ Vulnerabilidades</span><span>▾</span></div>
+<div id="sub-vuln" class="sub-sub open">
+<div class="sub-sub-item" onclick="openModalOrig('vuln')">➕ Registrar Vulnerabilidad</div>
+<div class="sub-sub-item" onclick="openF('valid-vuln')">☑ Indicadores Validacion - Checkbox</div>
+</div>
+
+</div>
+
+<div class="menu-label">Sistema</div>
+<div class="menu-item" onclick="openF('catalogo')"><span class="mi">EQ</span> Catalogo Equipos Sutil</div>
+<div class="menu-item" onclick="exportExcel()"><span class="mi">⇩</span> Exportar Excel</div>
+</div>
+</nav>
+
+<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+<div id="main" class="main">
+<header class="top">
+<div style="display:flex;align-items:center;gap:12px"><button class="btn-icon" onclick="toggleSidebar()">☰</button><h1 style="font-size:13px;font-weight:700">Portal Corporativo - Bitacora e Indicadores Mismo Menu - Registrar + Validacion Checkbox</h1></div>
+<div style="display:flex;gap:8px"><button class="btn btn-ghost" onclick="openF('catalogo')">Catalogo</button><button class="btn btn-dark" onclick="openF('dashboard')">Dashboard</button></div>
+</header>
+
+<div class="wrap">
+<div class="grid">
+<div class="card"><div class="card-head"><h3>Bitacora e Indicadores - Mismo Menu</h3><span class="tag">NUEVO</span></div>
+<div class="card-body">
+<div class="row" onclick="toggleSub('sub-bit-ind')"><div class="ic">BI</div><div class="txt"><b>Bitacora e Indicadores Permanecen Mismo Menu</b><span>Cada uno con 2 submenus: Registrar + Indicadores Validacion Checkbox</span></div><span>›</span></div>
+<div class="row" onclick="openModalOrig('resp')"><div class="ic">R</div><div class="txt"><b>Respaldos - Registrar</b><span>Registrar nuevo respaldo empresa</span></div><span>›</span></div>
+<div class="row" onclick="openF('valid-resp')"><div class="ic">☑</div><div class="txt"><b>Respaldos - Indicadores Validacion Checkbox</b><span>Ver cuales estan como checkbox - Validacion</span></div><span>›</span></div>
+</div>
+</div>
+<div class="card"><div class="card-head"><h3>Inventario - Catalogo Sutil Pro</h3></div><div class="card-body"><div id="mini-eq"></div><button class="btn btn-dark" style="margin-top:10px;width:100%" onclick="openF('catalogo')">Ver Catalogo Sutil Pro</button></div></div>
+<div class="card"><div class="card-head"><h3>Acciones Rapidas - Bitacora e Indicadores</h3></div><div class="card-body">
+<div class="row" onclick="openF('valid-acceso')"><div class="ic">☑</div><div class="txt"><b>Control Acceso - Validacion Checkbox</b><span>Indicadores validacion como checkbox</span></div><span>›</span></div>
+<div class="row" onclick="openF('valid-mant')"><div class="ic">☑</div><div class="txt"><b>Mantenimiento - Validacion Checkbox</b><span>Indicadores validacion como checkbox</span></div><span>›</span></div>
+<div class="row" onclick="openF('valid-vuln')"><div class="ic">☑</div><div class="txt"><b>Vulnerabilidades - Validacion Checkbox</b><span>Indicadores validacion como checkbox</span></div><span>›</span></div>
+</div></div>
+</div>
+</div>
+</div>
+
+<!-- Flotantes -->
+<div id="flotante-catalogo" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Catalogo Equipos Sutil Profesional</h3><p>Tradicional barra lateral - Sutil sin resaltar mucho</p></div><button class="btn btn-ghost" onclick="closeF('catalogo')">Cerrar</button></div><div class="flot-body"><div class="toolbar"><input id="sCat" class="input" placeholder="Buscar..." onkeyup="renderCatalogo()"><button class="btn btn-dark" onclick="openModalMadre()">Nuevo Equipo</button></div><div id="catalogoGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div></div></div></div>
+<div id="flotante-equipos" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Inventario Equipos Tabla CRUD</h3></div><button class="btn btn-ghost" onclick="closeF('equipos')">Cerrar</button></div><div class="flot-body"><div class="toolbar"><input id="sEq" class="input" placeholder="Buscar..." onkeyup="renderEquipos()"><button class="btn btn-dark" onclick="openModalMadre()">Nuevo Equipo</button></div><div class="table-wrap"><table><thead><tr><th>Codigo</th><th>Sistema</th><th>Inicio</th><th>Fin</th><th>Responsable</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbEq"></tbody></table></div></div></div></div>
+<div id="flotante-madre" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Matriz Madre Unificada</h3></div><button class="btn btn-ghost" onclick="closeF('madre')">Cerrar</button></div><div class="flot-body"><div id="madreHead"></div><div class="toolbar"><input id="sMadre" class="input" placeholder="Buscar..." onkeyup="renderMadre()"><button class="btn btn-dark" onclick="openModalMadre()">Nuevo</button></div><div class="table-wrap"><table><thead><tr id="thMadre"></tr></thead><tbody id="tbMadre"></tbody></table></div></div></div></div>
+<div id="flotante-dashboard" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Dashboard Ejecutivo - Bitacora e Indicadores Mismo Menu</h3></div><button class="btn btn-ghost" onclick="closeF('dashboard')">Cerrar</button></div><div class="flot-body"><div id="dashHead"></div><div id="dashContent"></div></div></div></div>
+
+<div id="flotante-resp" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Respaldos - Registrar - Mismo Menu Bitacora e Indicadores</h3></div><button class="btn btn-ghost" onclick="closeF('resp')">Cerrar</button></div><div class="flot-body"><div id="head-resp"></div><div class="table-wrap"><table><thead id="th-resp"></thead><tbody id="tb-resp"></tbody></table></div></div></div></div>
+<div id="flotante-acceso" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Control Acceso - Registrar</h3></div><button class="btn btn-ghost" onclick="closeF('acceso')">Cerrar</button></div><div class="flot-body"><div id="head-acceso"></div><div class="table-wrap"><table><thead id="th-acceso"></thead><tbody id="tb-acceso"></tbody></table></div></div></div></div>
+<div id="flotante-mant" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Mantenimiento - Registrar</h3></div><button class="btn btn-ghost" onclick="closeF('mant')">Cerrar</button></div><div class="flot-body"><div id="head-mant"></div><div class="table-wrap"><table><thead id="th-mant"></thead><tbody id="tb-mant"></tbody></table></div></div></div></div>
+<div id="flotante-vuln" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Vulnerabilidades - Registrar</h3></div><button class="btn btn-ghost" onclick="closeF('vuln')">Cerrar</button></div><div class="flot-body"><div id="head-vuln"></div><div class="table-wrap"><table><thead id="th-vuln"></thead><tbody id="tb-vuln"></tbody></table></div></div></div></div>
+
+<!-- INDICADORES VALIDACION CHECKBOX - ESTE ES EL CAMBIO QUE PEDISTE -->
+<div id="flotante-valid-resp" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Respaldos - Indicadores de Validacion - Checkbox</h3><p>Ver cuales estan como checkbox - Solo este es el cambio - Bitacora e Indicadores mismo menu</p></div><button class="btn btn-ghost" onclick="closeF('valid-resp')">Cerrar</button></div><div class="flot-body"><div id="valid-resp-content"></div></div></div></div>
+<div id="flotante-valid-acceso" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Control Acceso - Indicadores de Validacion - Checkbox</h3><p>Ver cuales estan como checkbox</p></div><button class="btn btn-ghost" onclick="closeF('valid-acceso')">Cerrar</button></div><div class="flot-body"><div id="valid-acceso-content"></div></div></div></div>
+<div id="flotante-valid-mant" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Mantenimiento - Indicadores de Validacion - Checkbox</h3><p>Ver cuales estan como checkbox</p></div><button class="btn btn-ghost" onclick="closeF('valid-mant')">Cerrar</button></div><div class="flot-body"><div id="valid-mant-content"></div></div></div></div>
+<div id="flotante-valid-vuln" class="flot"><div class="flot-box"><div class="flot-head"><div><h3>Vulnerabilidades - Indicadores de Validacion - Checkbox</h3><p>Ver cuales estan como checkbox</p></div><button class="btn btn-ghost" onclick="closeF('valid-vuln')">Cerrar</button></div><div class="flot-body"><div id="valid-vuln-content"></div></div></div></div>
+
+<div id="modal" class="modal"><div class="modal-box"><div class="modal-head"><div><h4 id="mTitle">Nuevo Registro</h4></div><button class="btn btn-ghost" onclick="closeM()">X</button></div><div id="mForm"></div><div class="modal-foot"><button class="btn btn-dark" onclick="saveM()">Guardar</button><button class="btn btn-ghost" onclick="closeM()">Cancelar</button></div></div></div>
+<div id="toast" class="toast"><span id="toastMsg">Guardado</span></div>
+
+<script>
+var H_MADRE=["CODIGO","Sistema Empresa","Accion Empresa","Evidencia Empresa","Responsable Empresa","Estado Empresa","Rol Empresa","Resultado Empresa","Fecha Inicio","Fecha Fin","Estado Equipo","Actividad Empresa","Criticidad Empresa","Verificable Empresa","Repositorio Empresa"];
+var MADRE=[
+["AC A","SICET Principal","CREACION Usuario","CORREO CORPORATIVO","JEFE TIC","CERRADO","ADMIN","Exitoso","Enero Diez","Enero Once","Operativo","Limpieza Fisica Logs","Alta","Acta Entrega Uno","DTICs Actas"],
+["AC B","SERVIDOR BD SICET","ACTUALIZACION Parches","TICKET CUATRO CINCO DOS UNO","ANALISTA UNO","ABIERTO","EDITOR","Fallido","Enero Quince","Enero Veinte","Requiere Cambio","Actualizacion KB","Media","Ticket CUATRO CINCO DOS UNO","DTICs Tickets"],
+["AC C","BASE DATOS SICET","RESTAURACION BD","INFORME TECNICO","ANALISTA UNO","CERRADO","ADMIN","Exitoso","Enero Veinticinco","Enero Veintisiete","Operativo","Restauracion BD","Alta","Informe Pruebas Uno","DTICs Confidencial"],
+["AC D","PC CERO CERO UNO Gerencia","MANTENIMIENTO Preventivo","ACTA FIRMADA","ANALISTA DOS","CERRADO","USUARIO","Exitoso","Enero Veintiocho","Enero Veintiocho","Operativo","Limpieza Fisica Antivirus","Baja","Acta Mant Cero Uno","DTICs Actas Mant"],
+["AC E","SERVIDOR VIRTUALIZACION V SEIS","REMEDIACION SO","INFORME VULN","ANALISTA UNO","CERRADO","ADMIN","Exitoso","Febrero Uno","Febrero Dos","Operativo","Actualizacion SO","Alta","Informe Vuln Cero Uno","DTICs Seguridad"],
+["AC F","PC CERO DOS TRES Contabilidad","MANTENIMIENTO Cambio Disco","ACTA","ANALISTA UNO","ABIERTO","USUARIO","Pendiente","Febrero Diez","Febrero Quince","Requiere Cambio","Cambio Disco Quinientos GB SSD Un TB","Media","Acta Cero Dos","DTICs Actas"]
+];
+var ORIG={
+acceso:{title:"Control Acceso - Registrar - Bitacora e Indicadores Mismo Menu", headers:["Fecha Solicitud","Sistema","Accion","Evidencia","Rol","Responsable","Estado","Fecha Atencion","Fecha Inicio","Fecha Fin","Observaciones"], data:[["Junio Cinco","SICET Principal","CREACION Usuario","CORREO CORPORATIVO","EDITOR","ANALISTA UNO","CERRADO","Junio Seis","Junio Cinco","Junio Seis","Ejemplo Uno Usuario SICET creado"],["Junio Diez","BD SICET","ACTUALIZACION Permisos","SITRA Uno Dos Tres Cuatro","ADMIN","JEFE TIC","CERRADO","Junio Once","Junio Diez","Junio Once","Ejemplo Dos Permisos elevados"]]},
+resp:{title:"Respaldos - Registrar - Bitacora e Indicadores Mismo Menu", headers:["Fecha Inicio Respaldo","Sistema","Resultado","Responsable","Fecha Fin","Verificable","Repositorio","Detalle","Observacion"], data:[["Enero Veinticinco","SERVIDOR BD SICET Produccion","Exitoso","ANALISTA UNO","Enero Veintisiete","Informe Pruebas Uno Firmado","DTICs Confidencial","Ejemplo Uno Restauracion BD Quince Cero Uno Dos Tres Cuatro Cinco registros Cien por ciento recuperados","Verificado Jefe TIC OK"],["Febrero Veinte","CORREO INSTITUCIONAL Exchange","Exitoso","JEFE TIC","Febrero Veintiuno","Informe Cero Dos Checksum","DTICs Respaldos","Ejemplo Dos Quince buzones gerencia Cuarenta y cinco GB Cifrado AES Verificado","Verificado"]]},
+mant:{title:"Mantenimiento - Registrar - Bitacora e Indicadores Mismo Menu", headers:["Fecha Inicio Mant","Sistema","Actividad","Estado","Responsable","Fecha Fin","Verificable","Repositorio","Descripcion","Observacion"], data:[["Enero Veinticinco","SERVIDOR BD SICET Dell R Siete Cuatro Cero","Actualizacion Parches Seguridad","Operativo","ANALISTA UNO","Enero Veintisiete","Informe Mant Cero Uno","DTICs Interno","Ejemplo Uno Parches aplicados Reinicio Cero Dos Cero Cero AM Sin afectacion","Servidor estable Cuarenta y ocho h"],["Enero Veintiocho","PC CERO CERO UNO Dell Optiplex Gerencia General","Limpieza Fisica Logica Antivirus ESET","Operativo","ANALISTA DOS Torres","Enero Veintiocho","Acta Mant Cero Uno","DTICs Actas Mant","Ejemplo Dos Limpieza interna completa Cambio pasta termica Eliminacion software no autorizado Entregado conforme","Equipo entregado conforme"]]},
+vuln:{title:"Vulnerabilidades - Registrar - Bitacora e Indicadores Mismo Menu", headers:["Fecha Deteccion","Sistema","Vulnerabilidad","Criticidad","Responsable","Fecha Remediacion","Fecha Inicio","Fecha Fin","Estado","Verificable"], data:[["Enero Veinticinco","SERVIDOR VIRTUALIZACION V Seis Host ESXi","SO desactualizado Windows Server Dos Mil Dieciseis sin soporte","Alta","ANALISTA UNO","Abril Veintisiete","Enero Veinticinco","Abril Veintisiete","CERRADO","Ejemplo Uno Informe Mitigacion Cero Uno Actualizado a Server Dos Mil Veintidos Validado"],["Febrero Quince","SICET Web","SQL Injection en login OWASP A Cero Tres Nueve Ocho CVSS","Alta","ANALISTA DOS","Febrero Veintiocho","Febrero Quince","Febrero Veintiocho","ABIERTO","Ejemplo Dos WAF temporal Reporte Nessus Informe Vuln Cero Dos"]] }
+};
+var VALID={
+resp:[{name:"Respaldo BD Produccion Verificado",check:true,desc:"Restauracion BD Cien por ciento recuperada"},{name:"Checksum Validado",check:true,desc:"Informe Pruebas Uno Firmado"},{name:"Cifrado AES Verificado",check:false,desc:"Pendiente verificacion segundo respaldo"},{name:"Acta Entrega Firmada",check:true,desc:"Firmada por Jefe TIC"},{name:"Repositorio DTICs Confidencial",check:true,desc:"Guardado en DTICs Confidencial"}],
+acceso:[{name:"Correo Corporativo Evidencia",check:true,desc:"CORREO CORPORATIVO validado"},{name:"Ticket SITRA Validado",check:true,desc:"SITRA Uno Dos Tres Cuatro cerrado"},{name:"Rol ADMIN Verificado",check:false,desc:"Pendiente validacion JEFE TIC"},{name:"Fecha Atencion Cumplida",check:true,desc:"Atencion dentro de SLA"}],
+mant:[{name:"Informe Mant Cero Uno Firmado",check:true,desc:"Informe tecnico firmado"},{name:"Acta Mant Cero Uno Firmada",check:true,desc:"Acta de entrega firmada"},{name:"Limpieza Fisica Verificada",check:false,desc:"Pendiente foto evidencia"},{name:"Antivirus ESET Actualizado",check:true,desc:"Virus DB actualizada"},{name:"Equipo Entregado Conforme",check:true,desc:"Usuario firmo conforme"}],
+vuln:[{name:"Informe Mitigacion Cero Uno Validado",check:true,desc:"SO actualizado a Server Dos Mil Veintidos"},{name:"Scan Nessus Sin Vulnerabilidades Altas",check:false,desc:"Quedan 2 medias por remediar"},{name:"WAF Configurado Temporal",check:true,desc:"WAF activo mientras se parchea"},{name:"CVSS Validado",check:true,desc:"CVSS Alta validada"},{name:"Repositorio DTICs Seguridad",check:true,desc:"Evidencia en DTICs Seguridad"}]
+};
+var edit={type:null, idx:null, key:null};
+function isDate(h){return h.toLowerCase().indexOf('fecha')!==-1}
+function inputHTML(id,label,val){var t=isDate(label)?'date':'text';var long=label.toLowerCase().indexOf('detalle')!==-1||label.toLowerCase().indexOf('descripcion')!==-1||label.toLowerCase().indexOf('observ')!==-1;return '<div style="'+(long?'grid-column:1 / -1':'')+'"><label class="form-label">'+label+'</label>'+(long?'<textarea id="'+id+'" class="input" style="min-height:60px">'+(val||'')+'</textarea>':'<input id="'+id+'" class="input" type="'+t+'" value="'+(val||'')+'">')+'</div>';}
+function renderInicio(){var tl=document.getElementById('mini-eq');if(tl){tl.innerHTML=MADRE.slice(0,2).map(function(r){return '<div style="background:#fff;border:1px solid #eef0f5;padding:8px;border-radius:8px;display:flex;gap:8px"><div style="width:26px;height:26px;border-radius:6px;background:'+(r[5]=='CERRADO'?'#f0fdf4':'#fef2f2')+';display:flex;align-items:center;justify-content:center;font-size:9px">'+(r[5]=='CERRADO'?'OK':'--')+'</div><div style="flex:1"><b style="font-size:10px">'+r[1]+'</b><br><span style="font-size:9px;color:#6b7280">'+r[8]+' > '+r[9]+'</span></div></div>'}).join('')}}
+function openDash(){var c=MADRE.filter(function(r){return r[5]=='CERRADO'}).length;var p=Math.round(c/MADRE.length*100);document.getElementById('dashHead').innerHTML='<div style="display:flex;justify-content:space-between"><div><h4 style="font-weight:800">Dashboard Ejecutivo - Bitacora e Indicadores Mismo Menu '+p+' por ciento</h4><p style="font-size:10px;color:#6b7280">Bitacora y indicadores permanecen en mismo menu - Cada uno con 2 submenus: Registrar + Indicadores validacion checkbox</p></div><span class="badge '+(p>=60?'ok':'nook')+'">'+p+' por ciento</span></div>';document.getElementById('dashContent').innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px"><div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center"><b>'+MADRE.length+'</b><br><span style="font-size:9px;color:#64748b">Matriz Madre</span></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center"><b style="color:#166534">'+p+' por ciento</b><br><span style="font-size:9px;color:#64748b">Cumplimiento</span></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center"><b>BI Mismo Menu</b><br><span style="font-size:9px;color:#64748b">Bitacora e Indicadores</span></div><div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center"><b>Checkbox</b><br><span style="font-size:9px;color:#64748b">Indicadores Validacion</span></div></div>'}
+function openMadre(){var c=MADRE.filter(function(r){return r[5]=='CERRADO'}).length;var p=Math.round(c/MADRE.length*100);document.getElementById('madreHead').innerHTML='<div style="display:flex;justify-content:space-between"><div><h4 style="font-weight:800">Matriz Madre '+MADRE.length+' Regs '+p+' por ciento - Bitacora e Indicadores Mismo Menu</h4></div><span class="badge '+(p>=60?'ok':'nook')+'">'+p+' por ciento</span></div>';document.getElementById('thMadre').innerHTML=H_MADRE.map(function(h){return '<th>'+h+'</th>'}).join('')+'<th>Acciones</th>';document.getElementById('tbMadre').innerHTML=MADRE.map(function(r,i){return '<tr>'+r.map(function(c,ci){return '<td>'+([5,10].indexOf(ci)!==-1?'<span class="badge '+(c=='CERRADO'||c=='Operativo'||c=='Exitoso'?'ok':'nook')+'">'+c+'</span>':c)+'</td>'}).join('')+'<td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="padding:6px 8px" onclick="editMadre('+i+')">Editar</button><button class="btn btn-danger" style="padding:6px 8px" onclick="delMadre('+i+')">Borrar</button></div></td></tr>'}).join('')}
+function openOrig(key){var o=ORIG[key];document.getElementById('head-'+key).innerHTML='<div style="display:flex;justify-content:space-between"><div><h4 style="font-weight:800">'+o.title+' - Registrar - Mismo Menu Bitacora e Indicadores</h4><p style="font-size:10px;color:#6b7280">Submenu 1: Registrar - Bitacora e Indicadores permanecen en mismo menu</p></div><button class="btn btn-dark" style="width:auto" onclick="openModalOrig(\''+key+'\')">+ Registrar Nuevo</button></div>';document.getElementById('th-'+key).innerHTML='<tr>'+o.headers.map(function(h){return '<th>'+h+'</th>'}).join('')+'<th>Acciones</th></tr>';document.getElementById('tb-'+key).innerHTML=o.data.map(function(r,i){return '<tr>'+r.map(function(c){return '<td>'+c+'</td>'}).join('')+'<td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="padding:6px 8px" onclick="editOrig(\''+key+'\','+i+')">Editar</button><button class="btn btn-danger" style="padding:6px 8px" onclick="delOrig(\''+key+'\','+i+')">Borrar</button></div></td></tr>'}).join('')}
+function openValid(key){var list=VALID[key];var total=list.length;var ok=list.filter(function(x){return x.check}).length;var p=Math.round(ok/total*100);var content=document.getElementById('valid-'+key+'-content');if(!content)return;content.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><div><h4 style="font-weight:800">'+ORIG[key].title.split(' - ')[0]+' - Indicadores de Validacion Checkbox - Mismo Menu</h4><p style="font-size:10px;color:#6b7280;margin-top:4px">Bitacora e Indicadores mismo menu - Cada bitacora tiene 2 submenus: Registrar + Indicadores validacion como checkbox - Ver cuales estan</p></div><span class="badge '+(p>=60?'ok':'nook')+'">'+ok+'/'+total+' - '+p+' por ciento validado</span></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px"><div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center"><b>'+total+'</b><br><span style="font-size:9px;color:#64748b">Total Indicadores</span></div><div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px;text-align:center"><b style="color:#166534">'+ok+'</b><br><span style="font-size:9px;color:#64748b">Validados Checkbox</span></div><div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px;text-align:center"><b style="color:#991b1b">'+(total-ok)+'</b><br><span style="font-size:9px;color:#64748b">Pendientes Checkbox</span></div></div><div class="check-grid">'+list.map(function(item,idx){return '<label class="check-item" style="'+(item.check?'background:#f0fdf4;border-color:#bbf7d0':'background:#fef2f2;border-color:#fecaca')+'"><input type="checkbox" '+(item.check?'checked':'')+' onchange="toggleValid(\''+key+'\','+idx+',this.checked)"><div style="flex:1"><b style="font-size:11px;display:block">'+item.name+'</b><span style="font-size:9px;color:#6b7280">'+item.desc+'</span></div><span class="badge '+(item.check?'ok':'nook')+'">'+(item.check?'Validado':'Pendiente')+'</span></label>'}).join('')+'</div><div style="margin-top:16px;display:flex;gap:10px"><button class="btn btn-dark" onclick="validateAll(\''+key+'\')">Validar Todos Checkbox</button><button class="btn btn-ghost" onclick="openF(\''+key+'\')">Ir a Registrar '+ORIG[key].title.split(' - ')[0]+'</button></div>'}
+function toggleValid(key,idx,checked){VALID[key][idx].check=checked;openValid(key);toast((checked?'Validado':'Pendiente')+' - '+VALID[key][idx].name)}
+function validateAll(key){VALID[key].forEach(function(x){x.check=true});openValid(key);toast('Todos validados checkbox - '+key)}
+function renderCatalogo(){var f=document.getElementById('sCat')?document.getElementById('sCat').value.toLowerCase():'';var list=MADRE.filter(function(r){return!f||r.join(' ').toLowerCase().indexOf(f)!==-1});document.getElementById('catalogoGrid').innerHTML=list.map(function(r){return '<div style="background:#fff;border:1px solid #eef0f5;border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><b style="font-size:11px">'+r[1]+'</b><span class="badge '+(r[10]=='Operativo'?'ok':'nook')+'">'+r[10]+'</span></div><div style="font-size:9px;color:#6b7280"><div><b>Codigo:</b> '+r[0]+'</div><div><b>Responsable:</b> '+r[4]+'</div><div><b>Inicio:</b> '+r[8]+' Fin: '+r[9]+'</div></div></div>'}).join('')}
+function renderEquipos(){var f=document.getElementById('sEq')?document.getElementById('sEq').value.toLowerCase():'';var list=MADRE.filter(function(r){return!f||r.join(' ').toLowerCase().indexOf(f)!==-1});document.getElementById('tbEq').innerHTML=list.map(function(r){return '<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[8]+'</td><td>'+r[9]+'</td><td>'+r[4]+'</td><td><span class="badge '+(r[10]=='Operativo'?'ok':'nook')+'">'+r[10]+'</span></td><td><div style="display:flex;gap:6px"><button class="btn btn-ghost" style="padding:6px 8px" onclick="editMadre('+MADRE.indexOf(r)+')">Editar</button></div></td></tr>'}).join('');renderCatalogo()}
+function openModalMadre(){document.getElementById('modal').classList.add('open');document.getElementById('mTitle').innerText='Nuevo Registro - Bitacora e Indicadores Mismo Menu';document.getElementById('mForm').innerHTML='<div class="form-grid">'+H_MADRE.map(function(h){return inputHTML('f_'+h,h,'')}).join('')+'</div>';edit={type:'madre',idx:null}}
+function editMadre(i){openModalMadre();H_MADRE.forEach(function(h,ci){var el=document.getElementById('f_'+h);if(el)el.value=MADRE[i][ci]});edit={type:'madre',idx:i}}
+function delMadre(i){if(confirm('Borrar '+MADRE[i][0]+'?')){MADRE.splice(i,1);openMadre();renderEquipos();renderInicio();toast('Borrado OK')}}
+function openModalOrig(key){document.getElementById('modal').classList.add('open');document.getElementById('mTitle').innerText='Registrar - '+ORIG[key].title+' - Bitacora e Indicadores Mismo Menu';document.getElementById('mForm').innerHTML='<div class="form-grid">'+ORIG[key].headers.map(function(h){return inputHTML('fo_'+h,h,'')}).join('')+'</div>';edit={type:'orig',key:key,idx:null}}
+function editOrig(key,i){openModalOrig(key);ORIG[key].headers.forEach(function(h,ci){var el=document.getElementById('fo_'+h);if(el)el.value=ORIG[key].data[i][ci]||''});edit={type:'orig',key:key,idx:i}}
+function delOrig(key,i){if(confirm('Borrar registro?')){ORIG[key].data.splice(i,1);openOrig(key);toast('Borrado OK')}}
+function saveM(){if(edit.type=='madre'){var v=H_MADRE.map(function(h){var el=document.getElementById('f_'+h);return el?el.value:''});if(edit.idx!=null){MADRE[edit.idx]=v}else{MADRE.push(v)}closeM();openMadre();renderEquipos();renderInicio();toast('Guardado OK')}if(edit.type=='orig'){var v=ORIG[edit.key].headers.map(function(h){var el=document.getElementById('fo_'+h);return el?el.value:''});if(edit.idx!=null){ORIG[edit.key].data[edit.idx]=v}else{ORIG[edit.key].data.push(v)}closeM();openOrig(edit.key);toast('Guardado OK - Registrar Bitacora e Indicadores Mismo Menu')}}
+function closeM(){document.getElementById('modal').classList.remove('open')}
+function toast(m){document.getElementById('toastMsg').innerText=m;var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2600)}
+function exportExcel(){var csv=H_MADRE.join(',')+'\n'+MADRE.map(function(r){return r.map(function(c){return '"'+c.replace(/"/g,'""')+'"'}).join(',')}).join('\n');var blob=new Blob([csv],{type:'text/csv'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='Matriz_Bitacora_Indicadores_Mismo_Menu.csv';a.click();toast('Excel Exportado')}
+document.addEventListener('DOMContentLoaded',function(){renderInicio();renderEquipos();openDash();console.log('BITACORA E INDICADORES MISMO MENU - Cada uno con 2 submenus: Registrar + Indicadores Validacion Checkbox - Solo ese cambio - Listo')})
+</script>
+</body>
+</html>
+HTML
+python3 -m http.server 3001
